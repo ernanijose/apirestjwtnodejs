@@ -1,5 +1,7 @@
+require('dotenv').config();
 const express = require('express');
 const app = express();
+
 
 app.get("/api", (req, res) => {
     res.status(200).json({
@@ -8,7 +10,7 @@ app.get("/api", (req, res) => {
     });
 });
 
-const PORT = 3636 || process.env.PORT;
+const PORT = process.env.PORT_APP;
 
 app.listen(PORT, () => {
     console.log(`O Servidor está funcionando na porta ${PORT}`);
