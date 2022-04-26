@@ -3,10 +3,12 @@ const {
     getUserByUserId,
     getUsers,
     updateUser,
-    deleteUser 
+    deleteUser,
+    getUserByUserEmail
 } = require('./user.service');
 
-const { genSaltSync, hashSync } = require('bcrypt');
+const { genSaltSync, hashSync, compareSync } = require('bcrypt');
+const { sign } = require('jsonwebtoken');
 
 module.exports = {
     createUser: (req, res) => {
@@ -109,6 +111,41 @@ module.exports = {
                 message: "Dado excluido com sucesso",
                 data: results
             });
+        });
+    },
+    login: (req, res) => {
+        const body = req.body;
+        //console.log(body);
+        getUserByUserEmail(body.email, (err, results) =>{
+            if(err){
+                console.log(err);
+                return;
+            }
+            if(!results){
+                return res.status(403).json({
+                    success: 0,
+                    message: "E-mai ou Senha inválidos"
+                });                
+            }
+            console.log(results);
+            const result = compareSync(body.password, results.password);
+            if(result){
+                results.password = undefined;
+                const jsontoken = sign({ result: results}, 'secret123456', { 
+                    expiresIn: "1h"
+                });
+
+                return res.status(200).json({
+                    success: 1,
+                    message: "Login efetuado com sucesso",
+                    token: jsontoken
+                });
+            }else{
+                return res.status(403).json({
+                    success: 0,
+                    message: "E-mai ou Senha inválidos"
+                }); 
+            }
         });
     }
 }
