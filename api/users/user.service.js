@@ -23,7 +23,7 @@ module.exports = {
       },
       getUsers: callBack => {
         pool.query(
-            `select * from registrations`, 
+            `select * from registration`, 
             [],
             (error, results, fields) => {
                 if(error){
@@ -48,8 +48,9 @@ module.exports = {
           );
       },
       updateUser: (data, callBack) => {
+          //console.log(data);
           pool.query(
-              `update registrations set firsName = ?, lastName = ?, gender = ?, email = ?, password = ?, number = ? where id = ?`,
+              `update registration set firstName = ?, lastName = ?, gender = ?, email = ?, password = ?, number = ? where id = ?`,
               [
                   data.first_name,
                   data.last_name,
@@ -63,21 +64,21 @@ module.exports = {
                 if(error){
                     return callBack(error);
                 }
-
-                return callBack(null, results[0]);
+                //console.log(results[0]);
+                return callBack(null, results);
               }
           );
       },
-      deleteUser: (data, callBack) => {
+      deleteUser: (id, callBack) => {
           pool.query(
               `delete from registration where id = ?`,
-              [data.id],
+              [id],
               (error, results, fields) => {
                   if(error){
                     return callBack(error);
                   }
 
-                  return callBack(null, results[0]);
+                  return callBack(null, results);
               }
           );
       }
